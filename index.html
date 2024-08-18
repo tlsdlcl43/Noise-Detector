@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floor Scope Solution</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <img src="로고이미지.png" alt="METAINNOTECH 로고" class="logo">
+        <h1>Floor Scope Solution</h1>
+    </header>
+
+    <nav>
+        <button id="manageHouseholdButton">세대 관리</button>
+        <button id="measureButton">소음 측정</button>
+        <button id="dashboardButton">대쉬보드</button>
+    </nav>
+
+    <section id="manageHouseholdSection">
+        <h2>세대 관리</h2>
+        <form id="householdForm">
+            <input type="text" id="buildingInput" placeholder="동" required>
+            <input type="text" id="unitInput" placeholder="호수" required>
+            <button type="submit">세대 추가</button>
+        </form>
+        <ul id="householdList"></ul>
+    </section>
+
+    <section id="measureSection" class="hidden">
+        <h2>세대별 중량충격음 측정</h2>
+        <div class="measurement-container">
+            <div class="left-side">
+                <select id="householdSelectMeasure">
+                    <option value="">세대 선택</option>
+                </select>
+                <button id="startButton" disabled>측정 시작</button>
+                <button id="stopButton" disabled>측정 종료</button>
+                <div id="decibelDisplay">-- dB</div>
+                <canvas id="decibelChart"></canvas>
+            </div>
+            <div class="right-side">
+                <div id="results">
+                    <h3>결과</h3>
+                    <p id="measurementDate">날짜: --</p>
+                    <p id="measurementTime">시간: --</p>
+                    <p id="avgValue">평균 값: -- dB</p>
+                    <p id="maxValue">최대 값: -- dB</p>
+                    <p id="minValue">최소 값: -- dB</p>
+                    <p id="aWeightedValue">A-가중치 값: -- dB(A)</p>
+                    <p id="laeqValue">Laeq 값: -- dB</p>
+                    <p id="freq63Value">63Hz: -- dB</p>
+                    <p id="freq125Value">125Hz: -- dB</p>
+                    <p id="freq250Value">250Hz: -- dB</p>
+                    <p id="freq500Value">500Hz: -- dB</p>
+                    <p id="liAFmaxValue">L'iA,Fmax: -- dB</p>
+                    <p id="lnAWValue">L'n,AW: -- dB</p>
+                    <p id="samplingRate">샘플링 속도: -- kHz</p>
+                    <p id="snr">신호대비잡음비: -- dB</p>
+                    <p id="fftSize">FFT 크기: --</p>
+                    <p id="duration">측정 기간: -- 초</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="dashboardSection" class="hidden">
+        <h2>대쉬보드</h2>
+        <button id="exportButton">엑셀로 내보내기</button>
+        <table id="dashboardTable">
+            <thead>
+                <tr>
+                    <th>동</th>
+                    <th>호수</th>
+                    <th>측정일시</th>
+                    <th>측정시간</th>
+                    <th>평균값 (dB)</th>
+                    <th>최대값 (dB)</th>
+                    <th>최소값 (dB)</th>
+                    <th>A-가중치 값 (dB(A))</th>
+                    <th>Laeq 값 (dB)</th>
+                    <th>63Hz (dB)</th>
+                    <th>125Hz (dB)</th>
+                    <th>250Hz (dB)</th>
+                    <th>500Hz (dB)</th>
+                    <th>L'iA,Fmax (dB)</th>
+                    <th>L'n,AW (dB)</th>
+                    <th>녹음 파일</th>
+                    <th>삭제</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 데이터가 여기에 추가됩니다 -->
+            </tbody>
+        </table>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
