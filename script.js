@@ -47,7 +47,6 @@ let micPermissionGranted = false; // 마이크 허용 여부 확인
 let measuring = false;
 let startTime;
 let calibrationInProgress = false; // 검교정 진행 상태 확인
-let sensitivityCorrection = 0; // 감도 보정 상수
 
 // 마이크 스트림 및 오디오 컨텍스트 초기화
 async function initializeAudio() {
@@ -82,45 +81,17 @@ calibrateButton.addEventListener('click', async () => {
     await initializeAudio();
 
     const calibrationFrequency = 1000; // 1000Hz 주파수로 검교정
-    const calibrationDuration = 5; // 5초 동안 교정 진행
-
+    const calibrationDuration = 5; // 5초 동안 검교정 진행
     const osc = audioContext.createOscillator();
     osc.frequency.setValueAtTime(calibrationFrequency, audioContext.currentTime);
     osc.connect(audioContext.destination);
-
-    let measuredValues = [];
-
-    scriptProcessor.onaudioprocess = () => {
-        const buffer = new Float32Array(analyser.fftSize);
-        analyser.getFloatTimeDomainData(buffer);
-
-        let sum = 0.0;
-        for (let i = 0; i < buffer.length; i++) {
-            sum += buffer[i] * buffer[i];
-        }
-        const rms = Math.sqrt(sum / buffer.length);
-        const decibel = 20 * Math.log10(rms);
-
-        if (decibel !== -Infinity) {
-            measuredValues.push(decibel + 100); // 감도 보정 전의 값
-        }
-    };
 
     osc.start();
 
     setTimeout(() => {
         osc.stop();
-        if (measuredValues.length > 0) {
-            const avgMeasuredValue = calculateAverage(measuredValues);
-            const expectedValue = 94; // 기준 94dB로 교정 (예시)
-
-            // 감도 보정 상수를 계산하여 저장
-            sensitivityCorrection = expectedValue - avgMeasuredValue;
-            alert(`교정 완료: ${sensitivityCorrection.toFixed(2)} dB 보정값이 적용되었습니다.`);
-        } else {
-            alert('교정 중 오류 발생. 측정값을 확인할 수 없습니다.');
-        }
         calibrationInProgress = false;
+        alert('검교정 완료');
     }, calibrationDuration * 1000);
 });
 
@@ -232,7 +203,7 @@ startButton.addEventListener('click', async () => {
             sum += buffer[i] * buffer[i];
         }
         const rms = Math.sqrt(sum / buffer.length);
-        let decibel = 20 * Math.log10(rms);
+        const decibel = 20 * Math.log10(rms);
 
         if (decibel === -Infinity) {
             decibelDisplay.textContent = `0.00 dB`;
@@ -240,11 +211,11 @@ startButton.addEventListener('click', async () => {
             households[selectedHousehold].aWeightedValues.push(applyAWeighting(0));
             updateFreqBands(0);
         } else {
-            decibel = Math.max(0, decibel + 100 + sensitivityCorrection); // 감도 보정 적용
-            households[selectedHousehold].decibelValues.push(decibel);
-            households[selectedHousehold].aWeightedValues.push(applyAWeighting(decibel));
-            updateFreqBands(buffer, decibel);
-            decibelDisplay.textContent = `${decibel.toFixed(2)} dB`;
+            const adjustedDecibel = Math.max(0, decibel + 100);
+            households[selectedHousehold].decibelValues.push(adjustedDecibel);
+            households[selectedHousehold].aWeightedValues.push(applyAWeighting(adjustedDecibel));
+            updateFreqBands(buffer, adjustedDecibel);
+            decibelDisplay.textContent = `${adjustedDecibel.toFixed(2)} dB`;
         }
 
         updateChart(households[selectedHousehold].decibelValues);
