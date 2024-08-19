@@ -8,7 +8,7 @@ body {
 
 header {
     background-color: #ffffff;
-    color: #000000; /* 글씨 색상을 검은색으로 설정 */
+    color: #000000;
     padding: 20px 0;
     display: flex;
     align-items: center;
@@ -145,4 +145,19 @@ ul li button {
     text-align: left;
     padding-left: 20px;
     border-left: 1px solid #ccc;
+}
+
+#calibrateButton {
+    margin-top: 20px;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#calibrateButton:hover {
+    background-color: #0056b3;
 }

@@ -16,6 +16,7 @@ const exportButton = document.getElementById('exportButton'); // 엑셀 내보�
 // 측정 관련 변수
 const startButton = document.getElementById('startButton');
 const stopButton = document.getElementById('stopButton');
+const calibrateButton = document.getElementById('calibrateButton'); // 검교정 버튼
 const decibelDisplay = document.getElementById('decibelDisplay');
 const measurementDate = document.getElementById('measurementDate');
 const measurementTime = document.getElementById('measurementTime');
@@ -45,6 +46,7 @@ let audioContext, analyser, scriptProcessor, microphone, stream;
 let micPermissionGranted = false; // 마이크 허용 여부 확인
 let measuring = false;
 let startTime;
+let calibrationInProgress = false; // 검교정 진행 상태 확인
 
 // 마이크 스트림 및 오디오 컨텍스트 초기화
 async function initializeAudio() {
@@ -70,6 +72,28 @@ async function initializeAudio() {
         }
     }
 }
+
+// 검교정 함수
+calibrateButton.addEventListener('click', async () => {
+    if (calibrationInProgress) return;
+
+    calibrationInProgress = true;
+    await initializeAudio();
+
+    const calibrationFrequency = 1000; // 1000Hz 주파수로 검교정
+    const calibrationDuration = 5; // 5초 동안 검교정 진행
+    const osc = audioContext.createOscillator();
+    osc.frequency.setValueAtTime(calibrationFrequency, audioContext.currentTime);
+    osc.connect(audioContext.destination);
+
+    osc.start();
+
+    setTimeout(() => {
+        osc.stop();
+        calibrationInProgress = false;
+        alert('검교정 완료');
+    }, calibrationDuration * 1000);
+});
 
 // 화면 전환 함수
 function showSection(section) {
